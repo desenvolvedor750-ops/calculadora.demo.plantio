@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Plantio Florestal</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f1f4f2;
+    color: #26332b;
+}
+
+header {
+    background: #174b32;
+    color: white;
+    padding: 25px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 25px;
+}
+
+header p {
+    margin-bottom: 0;
+    color: #d5e8dc;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 25px auto;
+    padding: 15px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px #00000010;
+}
+
+h2 {
+    color: #174b32;
+    font-size: 18px;
+    margin-top: 0;
+}
+
+input {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ccd5ce;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+.area {
+    max-width: 250px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th {
+    background: #174b32;
+    color: white;
+    padding: 13px 8px;
+}
+
+td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #e1e6e2;
+    text-align: center;
+}
+
+td:first-child {
+    text-align: left;
+}
+
+td input {
+    min-width: 75px;
+}
+
+.resultado {
+    font-weight: bold;
+    color: #176b3b;
+}
+
+.total {
+    background: #e4f3e8;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.total strong {
+    font-size: 25px;
+    color: #176b3b;
+}
+
+button {
+    border: none;
+    padding: 11px 17px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 5px 3px;
+}
+
+.btn-add {
+    background: #174b32;
+    color: white;
+}
+
+.btn-print {
+    background: #245c91;
+    color: white;
+}
+
+.btn-clear {
+    background: #e5e9e6;
+    color: #333;
+}
+
+.btn-delete {
+    background: #fce5e5;
+    color: #a32222;
+}
+
+.referencia td:first-child {
+    font-weight: bold;
+}
+
+.info {
+    color: #66736a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+@media(max-width:650px) {
+    .card {
+        padding: 12px;
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 620px;
+    }
+
+    header h1 {
+        font-size: 20px;
+    }
+}
+
+@media print {
+    button {
+        display: none;
+    }
+
+    body {
+        background: white;
+    }
+
+    .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🌳 CALCULADORA DE PLANTIO FLORESTAL</h1>
+    <p>Controle de espaçamento, densidade e quantidade de mudas</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+    <h2>1. DADOS DO PROJETO</h2>
+
+    <label>Área Total para Plantio (hectares)</label>
+    <input class="area" type="number" id="area"
+    value="10" min="0" step="0.01" oninput="calcular()">
+
+    <p class="info">Informe a área total que será utilizada no plantio.</p>
+</div>
+
+<div class="card">
+    <h2>2. MODELOS DE ESPAÇAMENTO</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Modelo de Espaçamento</th>
+                <th>Entre Linhas (m)</th>
+                <th>Entre Plantas (m)</th>
+                <th>Densidade (mudas/ha)</th>
+                <th>Total de Mudas</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+
+        <tbody id="tabela"></tbody>
+    </table>
+
+    <button class="btn-add" onclick="adicionar()">
+        + Adicionar Modelo
+    </button>
+</div>
+
+<div class="card">
+    <h2>3. RESULTADO DO PROJETO</h2>
+
+    <div class="total">
+        <div>
+            <div>Total Geral de Mudas</div>
+            <strong id="totalGeral">16.670</strong>
+        </div>
+
+        <div>
+            <div>Área Total</div>
+            <strong id="areaResultado">10,00 ha</strong>
+        </div>
+    </div>
+
+    <p class="info">
+        Os resultados são calculados automaticamente conforme
+        a área e os espaçamentos informados.
+    </p>
+</div>
+
+<div class="card">
+    <h2>4. REFERÊNCIAS RÁPIDAS</h2>
+
+    <table class="referencia">
+        <thead>
+            <tr>
+                <th>Espaçamento</th>
+                <th>Densidade</th>
+                <th>Unidade</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>3,0 x 2,0 m</td>
+                <td>1.667</td>
+                <td>mudas/ha</td>
+            </tr>
+            <tr>
+                <td>3,0 x 2,5 m</td>
+                <td>1.333</td>
+                <td>mudas/ha</td>
+            </tr>
+            <tr>
+                <td>3,5 x 2,14 m</td>
+                <td>1.335</td>
+                <td>mudas/ha</td>
+            </tr>
+            <tr>
+                <td>3,0 x 3,0 m</td>
+                <td>1.111</td>
+                <td>mudas/ha</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>5. FÓRMULA DE CÁLCULO</h2>
+
+    <p><strong>Densidade por hectare:</strong></p>
+    <p>10.000 ÷ (Entre linhas × Entre plantas)</p>
+
+    <p><strong>Total de mudas:</strong></p>
+    <p>Área em hectares × Densidade por hectare</p>
+
+    <p class="info">
+        Exemplo: 10.000 ÷ (3 × 2) = 1.666,67 mudas/ha.
+        O resultado é arredondado para número inteiro.
+    </p>
+</div>
+
+<div style="text-align:center">
+    <button class="btn-print" onclick="window.print()">
+        Imprimir / Salvar PDF
+    </button>
+
+    <button class="btn-clear" onclick="limpar()">
+        Limpar Projeto
+    </button>
+</div>
+
+</div>
+
+<script>
+let contador = 0;
+
+function adicionar(nome = "Outro Modelo", linha = 3, planta = 2) {
+    contador++;
+
+    const id = contador;
+    const tr = document.createElement("tr");
+    tr.id = "linha" + id;
+
+    tr.innerHTML = `
+        <td>
+            <input type="text" value="${nome}"
+            class="nome" placeholder="Nome do modelo"
+            oninput="calcular()">
+        </td>
+
+        <td>
+            <input type="number" value="${linha}"
+            class="linha" min="0" step="0.01"
+            oninput="calcular()">
+        </td>
+
+        <td>
+            <input type="number" value="${planta}"
+            class="planta" min="0" step="0.01"
+            oninput="calcular()">
+        </td>
+
+        <td class="resultado densidade">0</td>
+        <td class="resultado mudas">0</td>
+
+        <td>
+            <button class="btn-delete"
+            onclick="remover(${id})">Excluir</button>
+        </td>
+    `;
+
+    document.getElementById("tabela").appendChild(tr);
+    calcular();
+}
+
+function calcular() {
+    const area = Math.max(0,
+        Number(document.getElementById("area").value) || 0);
+
+    let total = 0;
+
+    document.querySelectorAll("#tabela tr").forEach(tr => {
+        const linha = Number(tr.querySelector(".linha").value);
+        const planta = Number(tr.querySelector(".planta").value);
+
+        let densidade = 0;
+        let mudas = 0;
+
+        if (linha > 0 && planta > 0) {
+            densidade = 10000 / (linha * planta);
+            mudas = Math.round(densidade * area);
+        }
+
+        tr.querySelector(".densidade").textContent =
+            Math.round(densidade).toLocaleString("pt-BR");
+
+        tr.querySelector(".mudas").textContent =
+            mudas.toLocaleString("pt-BR");
+
+        total += mudas;
+    });
+
+    document.getElementById("totalGeral").textContent =
+        total.toLocaleString("pt-BR");
+
+    document.getElementById("areaResultado").textContent =
+        area.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }) + " ha";
+}
+
+function remover(id) {
+    document.getElementById("linha" + id).remove();
+    calcular();
+}
+
+function limpar() {
+    if (confirm("Deseja limpar todos os modelos do projeto?")) {
+        document.getElementById("tabela").innerHTML = "";
+        document.getElementById("area").value = 0;
+        calcular();
+    }
+}
+
+// Modelos iniciais
+adicionar("Densa (3 x 2)", 3, 2);
+adicionar("Padrão (3 x 2,5)", 3, 2.5);
+adicionar("Larga (3 x 3)", 3, 3);
+adicionar("Manejo (3,5 x 2)", 3.5, 2);
+adicionar("Outro Modelo", 0, 0);
+
+</script>
+
+</body>
+</html>
